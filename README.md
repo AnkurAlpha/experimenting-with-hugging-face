@@ -2,7 +2,7 @@
 
 A small repo for learning and experimenting with the Transformers ecosystem.
 
-## Setup (`uv` + `.venv`)
+## Setup (`uv` only)
 
 1. Install `uv` (Arch):
 ```bash
@@ -16,49 +16,34 @@ uv python pin 3.14
 ```bash
 uv venv
 ```
-4. Activate environment:
+4. Install dependencies from lockfile:
 ```bash
-source .venv/bin/activate.fish
-```
-For bash/zsh:
-```bash
-source .venv/bin/activate
-```
-5. Install dependencies:
-```bash
-uv pip install -r requirements.txt
+uv sync
 ```
 
 ## Verify installation
 
 ```bash
-which python
-python --version
-python -c "import torch; print(torch.cuda.is_available())"
-python -c "import torch, transformers; print(torch.__version__); print(transformers.__version__)"
+uv run python --version
+uv run python -c "import torch; print(torch.cuda.is_available())"
+uv run python -c "import torch, transformers; print(torch.__version__); print(transformers.__version__)"
 ```
 
 ## Daily workflow
 
 ```bash
-source .venv/bin/activate.fish
-python your_script.py
-python -m pipeline_funcitons.some_module
-deactivate
+uv run python your_script.py
+uv run python -m pipeline_funcitons.some_module
 ```
 
-## Common `uv pip` commands
+## Common `uv` commands
 
 ```bash
-uv pip install <package>
-uv pip install --upgrade <package>
-uv pip uninstall <package>
-uv pip list
-uv pip freeze
-uv pip show <package>
-uv pip tree
-uv pip check
-uv pip sync requirements.txt
+uv add <package>
+uv remove <package>
+uv sync
+uv lock
+uv tree
 ```
 
 ## Helpful maintenance
@@ -66,7 +51,7 @@ uv pip sync requirements.txt
 ```bash
 uv cache clean
 uv cache clean <package-name>
-uv pip install --reinstall <package-name>
+uv sync --reinstall
 ```
 
 Clean rebuild:
@@ -74,12 +59,11 @@ Clean rebuild:
 ```bash
 rm -rf .venv
 uv venv
-source .venv/bin/activate.fish
-uv pip sync requirements.txt
+uv sync
 ```
 
 ## Notes
 
 - Keep work inside `.venv`.
-- Use `uv pip install -r requirements.txt` while experimenting.
-- Use `uv pip sync requirements.txt` when you want an exact environment.
+- Use `uv add <package>` while experimenting.
+- Run `uv sync` to restore the exact locked environment.
