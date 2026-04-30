@@ -1,12 +1,12 @@
 from pathlib import Path
-from transformers import pipeline, TextStreamer
+from transformers import pipeline, TextStreamer, GenerationConfig
 import torch
 
 MODEL_ID = "Qwen/Qwen2.5-Coder-0.5B-Instruct"
 
 
 def create_generator():
-    generator = pipeline(
+    text_generator = pipeline(
         task="text-generation",
         model=MODEL_ID,
         tokenizer=MODEL_ID,
@@ -15,11 +15,11 @@ def create_generator():
         device_map="auto",
         trust_remote_code=True,
     )
-    generator.model.generation_config.max_length = None
-    return generator
+    # text_generator.model.generation_config.max_length = None
+    return text_generator
 
 
-def generate_text(generator, user_prompt: str):
+def generate_text(text_generator, user_prompt: str):
     messages = [
         {
             "role": "system",
@@ -32,17 +32,21 @@ def generate_text(generator, user_prompt: str):
     ]
 
     stream = TextStreamer(
-        tokenizer=generator.tokenizer,
+        tokenizer=text_generator.tokenizer,
         skip_prompt=True,
         skip_special_tokens=True
     )
-    generator(
-        messages,
-        max_new_tokens=256,
+    generation_config = GenerationConfig(
+        max_new_tokens=1024,
         do_sample=True,
         temperature=0.7,
         top_p=0.9,
+        pad_token_id=text_generator.tokenizer.eos_token_id
+    )
+    text_generator(
+        messages,
         return_full_text=False,
+        generation_config=generation_config,
         streamer=stream
     )
 
@@ -52,5 +56,5 @@ if __name__ == "__main__":
     content = file_path.read_text()
     prompt = content + "\n\n Read the following code and analyze it"
 
-    generator = create_generator()
-    generate_text(generator, prompt)
+    text_generator = create_generator()
+    generate_text(text_generator, prompt)
