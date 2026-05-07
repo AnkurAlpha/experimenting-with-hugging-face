@@ -18,13 +18,14 @@ class LLM_GenerationConfigs:
         )
 
 
-class LLM_Model(LLM_GenerationConfigs):
+class LLM_Model:
     def __init__(self, model_id):
         self.model_id = model_id
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_id)
         self.model = AutoModelForCausalLM.from_pretrained(self.model_id)
         self.model.to(self.device)
+        self.model.eval()
         self.generation_config = LLM_GenerationConfigs.NormalConfig(
             self.tokenizer)
 
