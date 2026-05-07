@@ -1,30 +1,33 @@
-# 04_outputting_attention_score_using_eager.py
+# 04_outputting_LLM_structure.py
 
 ## What this file does
-Loads a causal language model with eager attention implementation and prints attention tensor metadata (number of layers and shape of layer 0).
+Implements a small object-oriented chat generation wrapper around a local Hugging Face causal model (`Qwen/Qwen2.5-Coder-0.5B-Instruct`).
 
-## Why eager attention is used
-Some optimized attention backends may not expose attention matrices in the same way. Setting `attn_implementation="eager"` helps make attention outputs accessible for inspection.
+## Main components
+1. `LLM_GenerationConfigs`
+- Provides a static `NormalConfig(tokenizer)` method returning a `GenerationConfig` with sampling settings (`max_new_tokens`, `temperature`, `top_p`, and EOS/PAD IDs).
+2. `LLM_Model`
+- Loads tokenizer and model.
+- Moves model to available device (`cuda` or `cpu`).
+- Encodes chat messages via `apply_chat_template(...)`.
+- Generates output with `model.generate(...)`.
+- Returns only newly generated text (prompt portion removed).
+3. `Messages`
+- Simple helper class to build message dicts (`{"role": ..., "content": ...}`).
 
 ## Code flow
-1. Loads tokenizer and model (`Qwen/Qwen2.5-Coder-0.5B-Instruct`).
-2. Reads `example.py` content.
-3. Builds chat-style prompt using `apply_chat_template(...)`.
-4. Tokenizes prompt.
-5. Runs forward pass with:
-- `output_attentions=True`
-- `return_dict=True`
-6. Prints:
-- number of attention layers
-- shape of first layer's attention tensor
+1. Instantiate `LLM_Model`.
+2. Build system and user messages.
+3. Convert messages to chat-template prompt and tokenize.
+4. Generate text using configured generation parameters.
+5. Decode and print only the generated continuation.
 
 ## How to run
 From inside `other_codes/`:
 ```bash
-uv run python 04_outputting_attention_score_using_eager.py
+uv run python 04_outputting_LLM_structure.py
 ```
-Or from repo root (if path adjusted).
 
 ## Notes
-- This script is for inspection/debugging, not normal text generation output.
-- Attention tensors can consume significant memory for long inputs.
+- This script now performs text generation, not attention-matrix inspection.
+- User prompt is interactive (`input("Enter your prompt: ")`).

@@ -1,6 +1,6 @@
 # the code is under refactoration for the next aim
 from pathlib import Path
-from transformers import pipeline, TextStreamer, GenerationConfig
+# from transformers import pipeline, TextStreamer, GenerationConfig
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 
