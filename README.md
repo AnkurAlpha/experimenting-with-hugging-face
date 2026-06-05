@@ -1,5 +1,17 @@
 # Transformers Experiments
 
+### Todo's
+- [ ] refine the concept of KV cache `A deeper understanding`
+- [ ] understand inferences␍
+- [ ] KMV cache
+- [ ] page cache
+- [ ] flash memory implementation
+- [ ] GGUF implementation
+- [ ] understanding MOE's Architecture
+- [ ] KVM cache implementation
+- [ ] TurboQuant implementation
+- [ ] D flash implementation
+
 A small repo for learning and experimenting with the Transformers ecosystem.
 
 ## Setup (`uv` only)
